@@ -1,7 +1,7 @@
 express
 databas  ( users, posts)
     user: id, email, username, meta...
-    posts: id, title, content, comments, likes
+    posts: id, title, content, comments, likes, userid
 auth - nästan färdig kod
 
 ADMIN

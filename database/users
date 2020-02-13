@@ -1,0 +1,6 @@
+{"k":"0000000078","o":"0000000091","v":"001"}
+{"_id":2,"_uid":2,"_dt":1581591471016,"_s":"de756437b89498e794a8a46039b4a4e5"}
+{"username":"s@sdsa","email":"fasf@sss.ss","password":"sdada","_id":{"$wrap":"$oid","v":2}}
+{"k":"0000000078","o":"0000000159","v":"001"}
+{"_id":3,"_uid":3,"_dt":1581591840926,"_s":"9785250c93aa1686b547d8e24d49a625"}
+{"username":"adam","email":"adaros0128@edu.halmstad.se","password":"$2a$12$0ctZ.vkOuX5DU.vrptzdH.myI5RBfddNqWcqUW7Us87rhKiQWOgre","_id":{"$wrap":"$oid","v":3}}
