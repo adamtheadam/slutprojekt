@@ -3,14 +3,22 @@ const tingo = require("tingodb")().Db;
 const app = express();
 const db = new tingo(__dirname + "/database", {});
 const users = db.collection("users");
+const posts = db.collection("posts");
 const bcrypt = require("bcryptjs");
 const secret = process.env.secret;
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
+const auth = require("./middleware/auth");
+require("dotenv").config();
+console.log(process.env.ADAM);
 
 app.use(express.urlencoded({extended:false}));
+app.use(cookieParser());
+app.get("/", auth,(req,res) =>{
 
-app.get("/", (req,res) =>{
-    res.sendFile(__dirname + "/html/form.html")
+    //posts.insert({post:req.query.post,email:req.email})
+    res.sendFile(__dirname + "/html/index.html");
+    
 });
 
 app.get("/login", (req,res) =>{
@@ -24,6 +32,10 @@ app.post("/login", async (req,res) => {
 
            let pwCheck = await bcrypt.compare(password,user.password);
            if (pwCheck){
+
+            let token = jwt.sign({email},process.env.secret,{expiresIn:"2h"});
+            res.cookie("token",token,{maxAge:7200000,sameSite:"strict",httpOnly:true})
+            console.log(token);
             res.redirect("/?loggedin");
 
            }
