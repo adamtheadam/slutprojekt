@@ -25,6 +25,11 @@ app.get("/login", (req,res) =>{
     res.sendFile(__dirname + "/html/loginform.html")
 }); 
 
+app.get("/logout", (req,res) =>{
+    res.clearCookie("token");
+    res.redirect("/")
+}); 
+
 app.post("/login", async (req,res) => {
     let {email,password} = req.body;
     users.findOne({email:email},async (err,user) =>{
