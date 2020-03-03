@@ -1,6 +1,7 @@
 function auth(req,res,next){
     const jwt = require("jsonwebtoken");
     const secret = process.env.secret;
+    const path = require("path");
     // Börja med att kolla cookie om den ens existerar...
     if(req.cookies.token){
 
@@ -9,15 +10,15 @@ function auth(req,res,next){
                 req.email = token.email;
                 next();
             }else{
-                res.send(err.message);
+                res.sendFile(path.join(__dirname,"..","/html/home.html"));
             }
         });
 
     }
     else{
-        res.send("no token provided");
+        res.sendFile(path.join(__dirname,"..","/html/home.html"));
     }
-
+                              
 }
 
 module.exports = auth;

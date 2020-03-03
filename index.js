@@ -14,12 +14,23 @@ console.log(process.env.ADAM);
 
 app.use(express.urlencoded({extended:false}));
 app.use(cookieParser());
+app.posts = posts;
+
+app.get("/create", (req,res) =>{
+    res.sendFile(__dirname + "/html/create.html");
+})
+
 app.get("/", auth,(req,res) =>{
 
     //posts.insert({post:req.query.post,email:req.email})
     res.sendFile(__dirname + "/html/index.html");
     
 });
+
+app.get("create", (req,res) =>{
+    app.posts.insertOne(req.body);
+    res.redirect("/");
+})
 
 app.get("/login", (req,res) =>{
     res.sendFile(__dirname + "/html/loginform.html")
