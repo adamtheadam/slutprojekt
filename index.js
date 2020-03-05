@@ -14,36 +14,83 @@ console.log(process.env.ADAM);
 
 app.use(express.urlencoded({extended:false}));
 app.use(cookieParser());
-app.posts = posts;
 
-app.get("/create", (req,res) =>{
-    res.sendFile(__dirname + "/html/create.html");
-})
+/* doStuff();
+async function doStuff(){
+    try {
+        let myData = await getData();
+        console.log(myData);
+    } catch (error) {
+        console.log(error);
+    };
+}; */
 
-app.get("/", auth,(req,res) =>{
+function insertData(data){
+   
+    return new Promise((resolve,reject) =>{
+        posts.insert(data, (err) =>{
+            if(err) reject("Insert Tingo Error");
+            else resolve("success");
+        });
 
-    //posts.insert({post:req.query.post,email:req.email})
-    res.sendFile(__dirname + "/html/index.html");
-    
+    });
+
+};
+
+function getData(){
+
+    return new Promise((resolve,reject) =>{
+
+        posts.find().toArray((err,data) =>{
+
+            if(err) reject("data error");
+            else resolve(data);
+
+        });
+
+    });
+
+};
+
+////////////////////// Paths //////////////////////
+
+app.get("/create", auth,(req,res) =>{
+
+    res.sendFile(__dirname + "/html/create.html");   
+
 });
 
-app.get("create", (req,res) =>{
-    app.posts.insertOne(req.body);
-    res.redirect("/");
-})
+app.post("/create", auth,async(req,res) =>{
 
+    try {
+        await insertData(req.body);
+        res.send("data saved");
+    } catch (error) {
+        res.send(error);
+    }
+
+});
+
+    // Sends index.html to /
+app.get("/", auth,(req,res) =>{
+
+    res.sendFile(__dirname + "/html/index.html");   
+
+});
+    
+    // Sends loginform.html to /login
 app.get("/login", (req,res) =>{
+
     res.sendFile(__dirname + "/html/loginform.html")
-}); 
 
-app.get("/logout", (req,res) =>{
-    res.clearCookie("token");
-    res.redirect("/")
 }); 
-
+    
+    // Login token
 app.post("/login", async (req,res) => {
+
     let {email,password} = req.body;
     users.findOne({email:email},async (err,user) =>{
+        
         if(user){
 
            let pwCheck = await bcrypt.compare(password,user.password);
@@ -52,29 +99,43 @@ app.post("/login", async (req,res) => {
             let token = jwt.sign({email},process.env.secret,{expiresIn:"2h"});
             res.cookie("token",token,{maxAge:7200000,sameSite:"strict",httpOnly:true})
             console.log(token);
-            res.redirect("/?loggedin");
-
-           }
+            res.redirect("/?loggedin");           
+           
+        }
            else {
+
             res.redirect("/login?error");
-           }
+           
+        };
+        
         }
         else {
-            res.redirect("/login?error");
-        }
-    });
-    
-});
 
+            res.redirect("/login?error");
+        
+        };
+        
+    });
+
+});
+    
+    // Logout function
+app.get("/logout", (req,res) =>{   
+    res.clearCookie("token");
+    res.redirect("/");
+}); 
+    
+    // Sends registerform.html to /register
 app.get("/register", (req,res) =>{
     res.sendFile(__dirname + "/html/registerform.html")
-}); 
-
-app.post("/register", async (req,res) => {
+});
+    
+    // Register user function
+app.post("/register", async (req,res) => {    
     let user = {...req.body};
     user.password = await bcrypt.hash(user.password,12);
     users.insert(user);
     res.send(req.body);
 });
-
+    
 app.listen(2345, () => console.log("testing"));
